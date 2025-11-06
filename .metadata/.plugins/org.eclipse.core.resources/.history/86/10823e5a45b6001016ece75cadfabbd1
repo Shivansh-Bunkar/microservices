@@ -1,0 +1,25 @@
+# ============================
+# Application Information
+# ============================
+spring.application.name=ApiGateway
+server.port=7777
+
+# ============================
+# Eureka Configuration
+# ============================
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# ============================
+# Spring Cloud Gateway Routes
+# ============================
+spring.cloud.gateway.routes[0].id=currency-conversion
+spring.cloud.gateway.routes[0].uri=lb://CURRENCYPROJECT
+spring.cloud.gateway.routes[0].predicates[0]=Path=/CurrencyProject/**
+
+# ============================
+# Admin Server Client (optional)
+# ============================
+spring.boot.admin.client.url=http://localhost:7777
+management.endpoints.web.exposure.include=*

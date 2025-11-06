@@ -1,0 +1,50 @@
+# ============================
+# Application Information
+# ============================
+spring.application.name=CurrencyProject
+server.port=8005
+spring.cloud.compatibility-verifier.enabled=false
+
+# MySQL connection
+spring.datasource.url=jdbc:mysql://localhost:3306/conversiondb
+spring.datasource.username=root
+spring.datasource.password=root
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# Hibernate / JPA
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+
+# Optional - initialize schema/data
+#spring.sql.init.mode=always
+#spring.sql.init.schema-locations=classpath:schema.sql
+#spring.sql.init.data-locations=classpath:data.sql
+
+## Eureka server settings
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.instance.hostname=localhost
+
+
+spring.boot.admin.client.url=http://localhost:9090
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+
+#Thats My Own Corrected code
+spring.devtools.add-properties=false
+logging.level.web=DEBUG
+logging.level.org.springframework.beans.factory.support.MergedBeanDefinitionPostProcessor=ERROR
+logging.level.org.springframework.cloud.client.loadbalancer=ERROR
+
+
+# App name for tracing
+
+
+# Send traces to your local Zipkin
+management.tracing.export.zipkin.endpoint=http://localhost:9411/api/v2/spans
+
+# Send 100% of traces (for testing)
+management.tracing.sampling.probability=1.0
+#management.tracing.export.zipkin.endpoint=http://localhost:9411

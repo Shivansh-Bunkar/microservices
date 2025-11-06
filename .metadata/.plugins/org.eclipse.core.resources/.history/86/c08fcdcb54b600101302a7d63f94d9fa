@@ -1,0 +1,141 @@
+package com.sathya.currency.service;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
+import com.sathya.currency.entity.CurrencyResponse;
+import com.sathya.currency.feign.FeignClientCode;
+import com.sathya.currency.model.CurrencyExchange;
+import com.sathya.currency.model.CurrencyRequest;
+import com.sathya.currency.repository.CurrencyConversionRepository;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+@Service
+public class CurrencyConversionService {
+
+
+	@Autowired
+    private CurrencyConversionRepository conversionRepository;
+    
+    @Autowired
+    FeignClientCode feignClientCode;
+    
+    @Autowired
+    RestTemplate restTemplate;
+    
+    
+    @Autowired
+    WebClient.Builder webclienBuilder;
+    
+    
+    CurrencyResponse currencyResponse = new CurrencyResponse();
+    
+    
+    @CircuitBreaker(name="MICRSERVICESCURRENCYEXCHANGE",fallbackMethod = "fallbackConvertCurrency")
+    
+    
+    
+
+    public CurrencyResponse convertCurrency(CurrencyRequest currencyRequest) {
+//        double conversionRate = 83.25;
+
+       
+        //====================Rest template code========================
+//       RestTemplate restTemplate = new RestTemplate();
+        
+        //call the exchange service
+//       ResponseEntity<CurrencyExchange> currencyExchange = restTemplate.getForEntity("http://MicrservicesCurrencyExchange/api/v1/exchange/from/"+ currencyRequest.getFromCurrency()+ "/to/"+ currencyRequest.getToCurrency(),CurrencyExchange.class);
+//	          
+//       CurrencyExchange conversionRate = currencyExchange.getBody();
+//       
+//       double totalConvertedAmount=  currencyRequest.getQuantity() * conversionRate.getConversionRate();
+//       
+//    // Prepare CurrencyResponse object
+//       CurrencyResponse response = new CurrencyResponse();
+//       response.setFromCurrency(currencyRequest.getFromCurrency());
+//       response.setToCurrency(currencyRequest.getToCurrency());
+//       response.setQuantity(currencyRequest.getQuantity());
+//       response.setConversionRate(conversionRate.getConversionRate());
+//       response.setTotalConvertedAmount(totalConvertedAmount);
+//       response.setLocalDateTime(LocalDateTime.now());
+//			  return response;
+        
+        //===========web client code here ================//
+    	
+    	//create the webcient object by giving service ip
+    	
+//     	WebClient webclient = WebClient.create("http://MicrservicesCurrencyExchange");
+     	//using webclient object call the endpoint by giving the input
+    	
+    	
+//    	CurrencyExchange currencyExchange =  webclienBuilder.build()
+//    			                                 .get()
+//    			                                 .uri("http://MICRSERVICESCURRENCYEXCHANGE/api/v1/exchange/from/" + currencyRequest.getFromCurrency() + "/to/" + currencyRequest.getToCurrency())
+//     											 .retrieve()
+// 												 .bodyToMono(CurrencyExchange.class)
+//   												 .block();
+//    	
+//    	
+//    	
+//    	CurrencyResponse response = new CurrencyResponse();
+//        response.setFromCurrency(currencyRequest.getFromCurrency());
+//        response.setToCurrency(currencyRequest.getToCurrency());
+//        response.setQuantity(currencyRequest.getQuantity());
+//        response.setConversionRate(currencyExchange.getConversionRate());
+//        response.setTotalConvertedAmount(currencyRequest.getQuantity() * currencyExchange.getConversionRate());
+//        response.setLocalDateTime(LocalDateTime.now());
+//
+//        return response;
+        
+//           *****get the value from response******
+
+
+// @SuppressWarnings("unused")
+// double conversionRate = currencyExchange.getConversionRate();
+//        return currencyExchange.getConversionRate();
+
+
+//==============feign code=======================
+    	
+    	CurrencyExchange currencyExchange = feignClientCode.getExchangeRate(currencyRequest.getFromCurrency(), currencyRequest.getToCurrency());
+    	double conversionRate = currencyExchange.getConversionRate();
+
+
+double total = currencyRequest.getQuantity() * conversionRate;
+        CurrencyResponse response = new CurrencyResponse();
+        response.setFromCurrency(currencyRequest.getFromCurrency());
+        response.setToCurrency(currencyRequest.getToCurrency());
+        response.setQuantity(currencyRequest.getQuantity());
+        response.setConversionRate(conversionRate);
+        response.setTotalConvertedAmount(total);
+        response.setLocalDateTime(LocalDateTime.now());
+
+        CurrencyResponse save = conversionRepository.save(response);
+
+        return save;
+        
+    }
+        
+        
+     // Fallback method
+        public CurrencyResponse fallbackConvertCurrency(CurrencyRequest currencyRequest, Throwable t) {
+            CurrencyResponse response = new CurrencyResponse();
+            response.setFromCurrency(currencyRequest.getFromCurrency());
+            response.setToCurrency(currencyRequest.getToCurrency());
+            response.setQuantity(currencyRequest.getQuantity());
+            response.setConversionRate(5);
+            response.setTotalConvertedAmount(currencyRequest.getQuantity() * response.getConversionRate());
+            response.setLocalDateTime(LocalDateTime.now());
+
+            // Optionally save fallback response
+            conversionRepository.save(response);
+
+            return response;
+    }
+}

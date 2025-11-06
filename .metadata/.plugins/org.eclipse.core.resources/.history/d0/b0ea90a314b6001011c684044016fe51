@@ -1,0 +1,22 @@
+package com.sathya.currency.model;
+
+import com.sathya.currency.entity.CurrencyResponse;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class CurrencyExchange {
+	@Id
+private long id;
+private double conversionRate;
+private String fromCurrency;
+private String toCurrency;
+
+}

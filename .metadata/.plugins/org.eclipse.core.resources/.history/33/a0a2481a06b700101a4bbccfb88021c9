@@ -1,0 +1,22 @@
+server.port=7777
+spring.application.name=ApiGateway
+
+# Eureka configuration
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# Disable compatibility check if you’re using Boot 3.5.x
+spring.cloud.compatibility-verifier.enabled=false
+
+# Routes
+spring.cloud.gateway.routes[0].id=currency-project
+spring.cloud.gateway.routes[0].uri=lb://CURRENCYPROJECT
+spring.cloud.gateway.routes[0].predicates[0]=Path=/CurrencyProject/**
+spring.cloud.gateway.routes[0].filters[0]=StripPrefix=1
+
+spring.cloud.gateway.routes[1].filters[0]=StripPrefix=1
+spring.cloud.gateway.routes[1].id=exchange-project
+spring.cloud.gateway.routes[1].uri=lb://MICROSERVICESCURRENCYEXCHANGE
+spring.cloud.gateway.routes[0].predicates[1]=Path=/CurrencyProject/**
+

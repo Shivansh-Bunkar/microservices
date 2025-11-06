@@ -1,0 +1,22 @@
+package com.sathya.currency.model;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+
+public class CurrencyExchange {
+@Id
+@GeneratedValue(strategy = GenerationType.AUTO)
+private long id;
+private double conversionRate;
+private String fromCurrency;
+private String toCurrency;
+
+}

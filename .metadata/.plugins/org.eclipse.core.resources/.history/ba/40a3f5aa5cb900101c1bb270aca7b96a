@@ -1,0 +1,8 @@
+# ============================
+# Application Information
+# ============================
+spring.application.name=CurrencyProject
+server.port=8005
+spring.cloud.compatibility-verifier.enabled=false
+
+#management.tracing.export.zipkin.endpoint=http://localhost:9411

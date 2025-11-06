@@ -1,0 +1,104 @@
+#server.port=7777
+#spring.application.name=ApiGateway
+#
+## Eureka configuration
+#eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+#eureka.client.register-with-eureka=true
+#eureka.client.fetch-registry=true
+#eureka.instance.prefer-ip-address=true
+#
+#
+## Disable compatibility check if you’re using Boot 3.5.x
+#spring.cloud.compatibility-verifier.enabled=false
+#
+## Routes 1
+#spring.cloud.gateway.routes[0].id=currency-project
+#spring.cloud.gateway.routes[0].uri=lb://CURRENCYPROJECT
+#spring.cloud.gateway.routes[0].predicates[0]=Path=
+#spring.cloud.gateway.routes[0].filters[0]=StripPrefix=1
+#spring.cloud.gateway.server.webflux.routes[0].predicates[0].args[pattern]=/api/v1/conversion/**
+#
+## Routes 2
+#spring.cloud.gateway.routes[1].id=exchange-project
+#spring.cloud.gateway.routes[1].uri=lb://MICROSERVICESCURRENCYEXCHANGE
+#spring.cloud.gateway.routes[1].predicates[0]=Path=/CurrencyProject/**
+#spring.cloud.gateway.routes[1].filters[0]=StripPrefix=1
+#spring.cloud.gateway.server.webflux.routes[1].predicates[0].args[pattern]=/api/v1/exchange/**
+#
+#server.port=7777
+#spring.application.name=APIGATEWAY
+#
+## Eureka
+#eureka.client.service-url.defaultZone=http://localhost:8761/eureka/
+#eureka.client.register-with-eureka=true
+#eureka.client.fetch-registry=true
+#eureka.instance.prefer-ip-address=true
+#
+#spring.cloud.compatibility-verifier.enabled=false
+#
+## ========================
+## ROUTE 1: Currency Conversion Service
+## ========================
+#spring.cloud.gateway.routes[0].id=currency-project
+#spring.cloud.gateway.routes[0].uri=lb://CURRENCYPROJECT
+#spring.cloud.gateway.routes[0].predicates[0]=Path=/api/v1/conversion/**
+#spring.cloud.gateway.routes[0].filters[0]=StripPrefix=1
+#
+## ========================
+## ROUTE 2: Currency Exchange Service
+## ========================
+#spring.cloud.gateway.routes[1].id=exchange-project
+#spring.cloud.gateway.routes[1].uri=lb://MICROSERVICESCURRENCYEXCHANGE
+#spring.cloud.gateway.routes[1].predicates[0]=Path=/api/v1/exchange/**
+#spring.cloud.gateway.routes[1].filters[0]=StripPrefix=1
+
+# Application Information
+spring.application.name=api-gateway
+server.port=7777
+
+
+# Eureka Client Configuration
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.instance.prefer-ip-address=true
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# Logging (for debugging routes)
+logging.level.org.springframework.cloud.gateway=DEBUG
+logging.level.org.springframework.web=DEBUG
+
+
+# Enable Discovery Locator (Important for Eureka)
+spring.cloud.gateway.server.webflux.discovery.locator.enabled=true
+spring.cloud.gateway.server.webflux.discovery.locator.lower-case-service-id=true
+
+
+# ✅ Enable service discovery for routes
+#spring.cloud.gateway.discovery.locator.enabled=true
+#spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+## ✅ Define Route for Currency Exchange Service
+#spring.cloud.gateway.routes[0].id=currency-exchange-service
+#spring.cloud.gateway.routes[0].uri=http://localhost:8001
+#spring.cloud.gateway.routes[0].predicates[0]=Path=/api/v1/exchange/**
+#
+## ✅ Define Route for Currency Conversion Service (example)
+#spring.cloud.gateway.routes[1].id=currency-conversion-service
+#spring.cloud.gateway.routes[1].uri=http://localhost:8002
+#spring.cloud.gateway.routes[1].predicates[0]=Path=/api/v1/convert/**
+
+
+# Route 1: Currency Exchange Service
+#service-2 routing currency-exchange-service Configuration
+spring.cloud.gateway.routes[0].id=currency-exchange
+spring.cloud.gateway.routes[0].uri=lb://MICRSERVICESCURRENCYEXCHANGE
+spring.cloud.gateway.routes[0].predicates[0].name=Path
+spring.cloud.gateway.routes[0].predicates[0].args[pattern]=/api/v1/from/{from}/to/{to}
+
+# Route 2: Currency Conversion Service
+spring.cloud.gateway.server.webflux.routes[1].id=currency-conversion
+spring.cloud.gateway.server.webflux.routes[1].uri=lb://MicrservicesCurrencyProject
+spring.cloud.gateway.server.webflux.routes[1].predicates[0].name=Path
+spring.cloud.gateway.server.webflux.routes[1].predicates[0].args[pattern]=/api/v1/conversion/**
+
+

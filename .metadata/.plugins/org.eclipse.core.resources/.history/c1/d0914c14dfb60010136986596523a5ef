@@ -1,0 +1,75 @@
+package com.sathya.currency_exchange.controller;
+
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sathya.currency_exchange.model.CurrencyExchange;
+import com.sathya.currency_exchange.repository.CurrencyExchangeRepository;
+import com.sathya.currency_exchange.service.ExchangeService;
+@RequestMapping("/api/v1/exchange")
+@RestController
+public class CurrencyExchangeController {
+
+@Autowired 
+ExchangeService currencyExchangeRepository;
+
+//@GetMapping("/api/v1/exchange/from/{from}/to/{to}")
+//
+//public ResponseEntity<CurrencyExchange> getExchangeRate(@PathVariable String from, @PathVariable String to ) {
+//
+//	 Optional<CurrencyExchange> optionalData = currencyExchangeRepository.findByFromCurrencyAndToCurrency(from, to);
+//
+//
+//
+//        if (optionalData.isPresent()) {
+//
+//            return ResponseEntity
+//
+//            		 .status(HttpStatus.OK)
+//
+//                    .header("info", "Data Retrieved Successfully")
+//
+//                    .body(optionalData.get());
+//
+//        } else {
+//
+//            return ResponseEntity
+//            		.status(HttpStatus.NOT_FOUND)
+//                    .header("info", "Data Retrieval Failed: Currency Pair Not Found")
+//                    .body(null);
+//
+//        }
+//
+//}
+
+@GetMapping("/from/{from}/to/{to}")
+public ResponseEntity<CurrencyExchange> retrieveExhangeValue(@PathVariable String from,
+												 	 	 	@PathVariable String to )
+{
+	CurrencyExchange exchangeobject = currencyExchangeRepository.getExchangeValue(from,to) ;
+	if(exchangeobject!=null) {
+		
+		return ResponseEntity.status(HttpStatus.OK)
+				.header("info", "data fetched successfully")
+				.body(exchangeobject);
+	}
+		
+	else {
+		return ResponseEntity.status(HttpStatus.NOT_FOUND)
+				.header("info", "data retreival fail")
+				.body(null);
+	}	
+		
+}
+
+}

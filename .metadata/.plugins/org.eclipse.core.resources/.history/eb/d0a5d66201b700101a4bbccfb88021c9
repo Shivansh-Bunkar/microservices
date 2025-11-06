@@ -1,0 +1,64 @@
+package com.sathya.currency.service;
+
+import java.time.LocalDateTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sathya.currency.entity.CurrencyResponse;
+import com.sathya.currency.feign.FeignClientCode;
+import com.sathya.currency.model.CurrencyExchange;
+import com.sathya.currency.model.CurrencyRequest;
+import com.sathya.currency.repository.CurrencyConversionRepository;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
+@Service
+public class CurrencyConversionService {
+
+
+	@Autowired
+    private CurrencyConversionRepository conversionRepository;
+    
+    @Autowired
+    FeignClientCode feignClientCode;
+    
+     CurrencyResponse currencyResponse = new CurrencyResponse();
+    
+    
+    @CircuitBreaker(name="MICRSERVICESCURRENCYEXCHANGE",fallbackMethod = "fallbackConvertCurrency")
+    
+    
+//   
+
+    public CurrencyResponse convertCurrency(CurrencyRequest request) {
+        CurrencyExchange exchange = feignClientCode.getExchangeRate(request.getFromCurrency(), request.getToCurrency());
+
+        double totalAmount = request.getQuantity() * exchange.getConversionRate();
+
+        CurrencyResponse response = new CurrencyResponse();
+        response.setFromCurrency(request.getFromCurrency());
+        response.setToCurrency(request.getToCurrency());
+        response.setQuantity(request.getQuantity());
+        response.setConversionRate(exchange.getConversionRate());
+        response.setTotalConvertedAmount(totalAmount);
+        return response;
+    }
+        
+        
+     // Fallback method
+        public CurrencyResponse fallbackConvertCurrency(CurrencyRequest currencyRequest, Throwable t) {
+            CurrencyResponse response = new CurrencyResponse();
+            response.setFromCurrency(currencyRequest.getFromCurrency());
+            response.setToCurrency(currencyRequest.getToCurrency());
+            response.setQuantity(currencyRequest.getQuantity());
+            response.setConversionRate(5);
+            response.setTotalConvertedAmount(currencyRequest.getQuantity() * response.getConversionRate());
+            response.setLocalDateTime(LocalDateTime.now());
+
+            // Optionally save fallback response
+            conversionRepository.save(response);
+
+            return response;
+    }
+}

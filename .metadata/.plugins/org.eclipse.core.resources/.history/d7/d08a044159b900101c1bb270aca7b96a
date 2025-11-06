@@ -1,0 +1,50 @@
+## Disable compatibility check if you’re using Boot 3.5.x
+spring.cloud.compatibility-verifier.enabled=false
+
+
+
+# Application Information
+spring.application.name=api-gateway
+server.port=7777
+
+
+# Eureka Client Configuration
+eureka.client.service-url.defaultZone=http://localhost:8761/eureka
+eureka.instance.prefer-ip-address=true
+eureka.client.register-with-eureka=true
+eureka.client.fetch-registry=true
+
+# Logging (for debugging routes)
+logging.level.org.springframework.cloud.gateway=DEBUG
+logging.level.org.springframework.web=DEBUG
+
+
+# Enable Discovery Locator (Important for Eureka)
+spring.cloud.gateway.server.webflux.discovery.locator.enabled=true
+spring.cloud.gateway.server.webflux.discovery.locator.lower-case-service-id=true
+
+
+# ✅ Enable service discovery for routes
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lower-case-service-id=true
+
+# Route 1: Currency Exchange Service
+#service-2 routing currency-exchange-service Configuration
+spring.cloud.gateway.routes[0].id=currency-exchange
+spring.cloud.gateway.routes[0].uri=lb://MICROSERVICESCURRENCYEXCHANGE
+spring.cloud.gateway.routes[0].predicates[0].name=Path
+spring.cloud.gateway.routes[0].predicates[0].args[pattern]=/api/v1/from/{from}/to/{to}
+
+# Route 2: Currency Conversion Service
+spring.cloud.gateway.routes[1].id=currency-conversion
+spring.cloud.gateway.routes[1].uri=lb://CurrencyProject
+spring.cloud.gateway.routes[1].predicates[0].name=Path
+spring.cloud.gateway.routes[1].predicates[0].args[pattern]=/api/v1/conversion/**
+
+# ============================
+# Spring Boot Admin
+# ============================
+spring.boot.admin.client.url=http://localhost:9090
+management.endpoints.web.exposure.include=*
+management.endpoint.health.show-details=always
+

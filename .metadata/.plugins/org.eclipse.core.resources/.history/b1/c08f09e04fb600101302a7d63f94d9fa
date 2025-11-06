@@ -1,0 +1,28 @@
+package com.sathya.currency_exchange.service;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sathya.currency_exchange.model.CurrencyExchange;
+import com.sathya.currency_exchange.repository.CurrencyExchangeRepository;
+@Service
+public class ExchangeService {
+
+	
+	@Autowired
+	CurrencyExchangeRepository currencyExchangeRepository;
+	
+	public CurrencyExchange getExchangeValue(String from, String to) {
+		 @SuppressWarnings("unused")
+		 Optional<CurrencyExchange> optionalData = currencyExchangeRepository.findByFromCurrencyAndToCurrency(from, to);
+		 CurrencyExchange exchangeObject = optionalData.orElseThrow();
+		if(optionalData!=null) {
+			
+			return exchangeObject;
+			
+		}
+		
+	}
+}
